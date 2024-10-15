@@ -6,6 +6,7 @@ import io.github.ay012.playermail.api.MailAPI
 import io.github.ay012.playermail.data.MailDataManager
 import io.github.ay012.playermail.data.PlayerData
 import io.github.ay012.playermail.data.PlayerDataManager
+import io.github.ay012.playermail.util.SerializationUtils
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
@@ -43,14 +44,14 @@ class YAML : MailAPI() {
 				true -> {
 					// 玩家在线，直接使用缓存数据更新 YAML
 					mails.forEach { mail ->
-						database(uuid)["mails.${mail.uuid}"] = PlayerDataManager.serializeMailList(mutableListOf(mail))
+						database(uuid)["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
 					}
 				}
 				false -> {
 					// 玩家不在线，先加载 YAML 中的当前数据
 					val currentMails = selectUser(uuid).apply { addAll(mails) }
 					currentMails.forEach { mail ->
-						database(uuid)["mails.${mail.uuid}"] = PlayerDataManager.serializeMailList(mutableListOf(mail))
+						database(uuid)["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
 					}
 					// 将离线玩家的数据从缓存中删除
 					PlayerDataManager.getPlayerMailCache.remove(uuid)
@@ -63,7 +64,7 @@ class YAML : MailAPI() {
 		val configTemplate = MailDataManager.getTemplateCache[id] ?: return
 
 		// 反序列化邮件模板
-		val mail = PlayerDataManager.deserializeConfiguration(configTemplate).apply {
+		val mail = SerializationUtils.deserializeConfiguration(configTemplate).apply {
 			this.uuid = UUID.randomUUID().toString()
 			this.sender = sender
 		}
@@ -90,7 +91,7 @@ class YAML : MailAPI() {
 			// 获取邮件数据字符串
 			mailsMap.getString(key)?.let {
 				// 反序列化邮件数据并将其转换为 PlayerData 对象的流
-				PlayerDataManager.deserializeMailList(it).stream()
+				SerializationUtils.deserializeMailList(it).stream()
 			} ?: Stream.empty()
 			// 收集处理后的结果并将其转换为可变列表返回
 		}.collect(Collectors.toList()).toMutableList()

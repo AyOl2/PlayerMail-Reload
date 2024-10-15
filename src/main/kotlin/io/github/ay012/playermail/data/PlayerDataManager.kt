@@ -1,12 +1,9 @@
 package io.github.ay012.playermail.data
 
 import io.github.ay012.playermail.PlayerMail.say
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.Json
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import taboolib.module.configuration.Configuration
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
@@ -60,45 +57,5 @@ object PlayerDataManager {
 		if (playerALLCache.add(player)) {
 			say("&8[&fINFO&8] &a${player.name} &3已载入至缓存...")
 		}
-	}
-
-	/**
-	 * 序列化工具类入口
-	 */
-	private val jsonUtils = Json {
-		prettyPrint = true
-		isLenient = true
-		ignoreUnknownKeys = true
-		coerceInputValues = true
-		encodeDefaults = true
-		allowStructuredMapKeys = true
-		allowSpecialFloatingPointValues = true
-	}
-
-	/**
-	 * 将 PlayerData 对象列表序列化为 JSON 字符串。
-	 * @param data PlayerData 对象的列表。
-	 * @return 序列化后的 JSON 字符串。
-	 */
-	fun serializeMailList(data: MutableList<PlayerData>): String {
-		return jsonUtils.encodeToString(ListSerializer(PlayerData.serializer()), data)
-	}
-
-	/**
-	 * 将 JSON 字符串反序列化为 PlayerData 对象列表。
-	 * @param serializedMailList JSON 字符串。
-	 * @return 反序列化后的 PlayerData 对象的列表。
-	 */
-	fun deserializeMailList(serializedMailList: String): MutableList<PlayerData> {
-		return jsonUtils.decodeFromString(ListSerializer(PlayerData.serializer()), serializedMailList).toMutableList()
-	}
-
-	/**
-	 * 将 Configuration 对象转换为 PlayerData 对象。
-	 * @param config Configuration 对象。
-	 * @return 反序列化后的 PlayerData 对象。
-	 */
-	fun deserializeConfiguration(config: Configuration): PlayerData {
-		return Configuration.deserialize(config, ignoreConstructor = true)
 	}
 }
