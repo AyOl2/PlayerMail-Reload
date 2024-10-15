@@ -15,7 +15,7 @@ expiration-time: 3600
 need-slot: 20
 
 items:
-  - ''
+  - '存储的物品名|数量|是否给予'
 
 use-mail-commands:
   - ''

@@ -25,17 +25,12 @@ object CommandSend : CommandExpression {
 					suggestion<CommandSender>(uncheck = true) { _, _ ->
 						listOf("me")
 					}
-					dynamic("到期时间") {
-						suggestion<CommandSender>(uncheck = true) { _, _ ->
-							listOf("none")
-						}
-						execute<CommandSender> { sender, context, _ ->
-							val mail = context["邮件唯一标识符"]
-							val user = context["发送目标"]
-							val senderName = if (context["指定发件人"] == "me") sender.name else context["指定发件人"]
+					execute<CommandSender> { sender, context, _ ->
+						val mail = context["邮件唯一标识符"]
+						val user = context["发送目标"]
+						val senderName = if (context["指定发件人"] == "me") sender.name else context["指定发件人"]
 
 
-						}
 					}
 				}
 			}

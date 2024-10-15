@@ -19,11 +19,11 @@ import kotlin.system.measureTimeMillis
 class YAML : MailAPI() {
 
 	private fun database(uuid: UUID): Configuration {
-		return createLocal("${PlayerMail.settings.getString("storage.yaml.path") ?: "users" }/$uuid.yml" ,type = Type.YAML)
+		return createLocal("save/${PlayerMail.settings.getString("storage.yaml.path") ?: "users" }/$uuid.yml" ,type = Type.YAML)
 	}
 
 	init {
-		submitAsync(delay = 200, period = PlayerMail.settings.getLong("auto-saveCache-time") * 1200) {
+		submitAsync(period = PlayerMail.settings.getLong("auto-saveCache-time") * 1200) {
 			measureTimeMillis {
 				saveCache()
 			}.also {
