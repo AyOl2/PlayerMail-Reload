@@ -1,0 +1,17 @@
+lang: 'zh_CN'
+
+auto-save-cache-time: 20
+
+storage:
+  type: 'yaml'
+
+  yaml:
+    path: 'users'
+
+  # 后续版本更新
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    user: root
+    password: root
+    database: playermail

@@ -1,0 +1,28 @@
+id: 'example'
+
+icon: 'STONE'
+
+title: '示例邮件'
+
+text:
+  - '示例邮件'
+
+conditions:
+  - '%player_level% >= 5'
+
+expiration-time: 3600
+
+need-slot: 20
+
+items:
+  - ''
+
+use-mail-commands:
+  - ''
+
+
+
+
+
+
+
