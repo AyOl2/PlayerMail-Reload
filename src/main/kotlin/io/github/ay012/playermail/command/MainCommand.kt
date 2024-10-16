@@ -16,6 +16,6 @@ object MainCommand {
 	@CommandBody(permission = "playermail.admin.send")
 	val send = CommandSend.command
 
-	@CommandBody(permission = "playermail.admin.save")
-	val save = CommandSaveItem.command
+	@CommandBody(permission = "playermail.admin.saveItem")
+	val saveItem = CommandSaveItem.command
 }

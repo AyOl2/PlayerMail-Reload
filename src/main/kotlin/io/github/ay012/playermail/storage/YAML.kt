@@ -6,8 +6,13 @@ import io.github.ay012.playermail.api.MailAPI
 import io.github.ay012.playermail.data.MailDataManager
 import io.github.ay012.playermail.data.PlayerData
 import io.github.ay012.playermail.data.PlayerDataManager
+import io.github.ay012.playermail.util.ItemStackUtils
 import io.github.ay012.playermail.util.SerializationUtils
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submitAsync
+import taboolib.library.xseries.getItemStack
+import taboolib.library.xseries.setItemStack
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
@@ -20,7 +25,11 @@ import kotlin.system.measureTimeMillis
 class YAML : MailAPI() {
 
 	private fun database(uuid: UUID): Configuration {
-		return createLocal("save/${PlayerMail.settings.getString("storage.yaml.path") ?: "users" }/$uuid.yml" ,type = Type.YAML)
+		return createLocal("save/${PlayerMail.settings.getString("storage.yaml.path") ?: "users" }/$uuid.yml", type = Type.YAML, saveTime = 12000)
+	}
+
+	private val items by lazy {
+		createLocal("save/items.yml", type = Type.YAML, saveTime = 12000)
 	}
 
 	init {
@@ -60,7 +69,7 @@ class YAML : MailAPI() {
 		}
 	}
 
-	override fun sendMail(uuid: UUID, id: String, sender: String, expireTime: Long) {
+	override fun sendMail(uuid: UUID, id: String, sender: String) {
 		val configTemplate = MailDataManager.getTemplateCache[id] ?: return
 
 		// 反序列化邮件模板
@@ -95,5 +104,13 @@ class YAML : MailAPI() {
 			} ?: Stream.empty()
 			// 收集处理后的结果并将其转换为可变列表返回
 		}.collect(Collectors.toList()).toMutableList()
+	}
+
+	override fun saveItems(name: String, item: ItemStack) {
+		items[name] = ItemStackUtils.itemStackToBase64(item)
+	}
+
+	override fun getItems(name: String, player: Player) {
+		player.inventory.addItem(ItemStackUtils.base64ToItemStack(items.getString("木头") ?: return))
 	}
 }

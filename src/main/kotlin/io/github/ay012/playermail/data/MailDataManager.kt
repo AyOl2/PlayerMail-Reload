@@ -35,13 +35,13 @@ object MailDataManager {
 
 				// 判断是否存在唯一标识符
 				val id = config.getString("id") ?: run {
-					say("&8[&cWARN&8] ${file.name} 加载失败 缺少唯一标识符")
+					say("&8[&cWARN&8] &c${file.name} 加载失败 缺少唯一标识符")
 					return@forEach
 				}
 
 				 //检查是否存在重复的ID
 				if (!loadedIds.add(id)) {
-					say("&8[&cWARN&8] ${file.name} 加载失败 重复的唯一标识符")
+					say("&8[&cWARN&8] &c${file.name} 加载失败 重复的唯一标识符")
 					return@forEach
 				}
 				templateCache[id] = config
