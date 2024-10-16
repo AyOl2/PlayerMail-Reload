@@ -109,6 +109,6 @@ class YAML : MailAPI() {
 	}
 
 	override fun getItems(name: String, player: Player) {
-		player.inventory.addItem(ItemStackUtils.base64ToItemStack(items.getString("木头") ?: return))
+		player.inventory.addItem(ItemStackUtils.base64ToItemStack(items.getString(name) ?: return))
 	}
 }

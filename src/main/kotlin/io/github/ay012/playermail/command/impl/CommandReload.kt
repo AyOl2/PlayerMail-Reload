@@ -16,7 +16,7 @@ object CommandReload : CommandExpression {
 				SettingsConfig.init()
 				TemplateConfig.init()
 			}.also {
-				sender.sendLang("插件配置重载", it)
+				sender.sendLang("插件配置-重载", it)
 			}
 		}
 	}

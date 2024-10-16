@@ -20,7 +20,6 @@ object MainCommand {
 	@CommandBody
 	val main = mainCommand {
 		execute<CommandSender> { sender, _, _ ->
-			// 判断是否为管理员
 			if (sender.isOp) {
 				sender.sendLang("管理员指令帮助")
 				return@execute

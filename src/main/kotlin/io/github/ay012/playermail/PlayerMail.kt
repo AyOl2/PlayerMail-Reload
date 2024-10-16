@@ -35,6 +35,7 @@ object PlayerMail : Plugin() {
 
     override fun onDisable() {
         mailAPI.saveCache() // 将缓存数据写入存储
+        super.onDisable()
     }
 
     fun say(string: String) = console().sendMessage("§8[§6Player§eMail§8]${string.colored()}")
