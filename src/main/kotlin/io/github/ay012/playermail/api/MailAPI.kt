@@ -35,7 +35,7 @@ abstract class MailAPI {
 	internal abstract fun saveCache()
 
 	/**
-	 * 将物品写入存储文件
+	 * 将物品写入存储
 	 *
 	 * @param name 保存的物品名
 	 * @param item 需要操作的物品

@@ -1,21 +1,25 @@
-package io.github.ay012.playermail.data
+package io.github.ay012.playermail.config
 
 import io.github.ay012.playermail.PlayerMail.say
 import taboolib.common.platform.function.getDataFolder
+import taboolib.module.configuration.Config
+import taboolib.module.configuration.ConfigFile
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
-object MailDataManager {
+object TemplateConfig {
+
+	@Config("template/示例模板邮件.yml")
+	private lateinit var config: ConfigFile
 
 	private val templateCache = ConcurrentHashMap<String, Configuration>() // 所有的邮件数据
 
-	val getTemplateCache
-		get() = templateCache
+	val getTemplateCache = templateCache
 
-
+	// 初始化方法，加载所有模板文件
 	fun init() {
 		this.template()
 	}
@@ -39,7 +43,7 @@ object MailDataManager {
 					return@forEach
 				}
 
-				 //检查是否存在重复的ID
+				//检查是否存在重复的ID
 				if (!loadedIds.add(id)) {
 					say("&8[&cWARN&8] &c${file.name} 加载失败 重复的唯一标识符")
 					return@forEach

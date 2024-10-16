@@ -1,9 +1,9 @@
 package io.github.ay012.playermail.storage
 
-import io.github.ay012.playermail.PlayerMail
 import io.github.ay012.playermail.PlayerMail.say
 import io.github.ay012.playermail.api.MailAPI
-import io.github.ay012.playermail.data.MailDataManager
+import io.github.ay012.playermail.config.SettingsConfig
+import io.github.ay012.playermail.config.TemplateConfig
 import io.github.ay012.playermail.data.PlayerData
 import io.github.ay012.playermail.data.PlayerDataManager
 import io.github.ay012.playermail.util.ItemStackUtils
@@ -11,8 +11,6 @@ import io.github.ay012.playermail.util.SerializationUtils
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submitAsync
-import taboolib.library.xseries.getItemStack
-import taboolib.library.xseries.setItemStack
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
@@ -25,7 +23,7 @@ import kotlin.system.measureTimeMillis
 class YAML : MailAPI() {
 
 	private fun database(uuid: UUID): Configuration {
-		return createLocal("save/${PlayerMail.settings.getString("storage.yaml.path") ?: "users" }/$uuid.yml", type = Type.YAML, saveTime = 12000)
+		return createLocal("save/${SettingsConfig.yaml_path}/$uuid.yml", type = Type.YAML, saveTime = 12000)
 	}
 
 	private val items by lazy {
@@ -33,7 +31,7 @@ class YAML : MailAPI() {
 	}
 
 	init {
-		submitAsync(period = PlayerMail.settings.getLong("auto-saveCache-time") * 1200) {
+		submitAsync(period = SettingsConfig.autoSaveCacheTime) {
 			measureTimeMillis {
 				saveCache()
 			}.also {
@@ -70,7 +68,7 @@ class YAML : MailAPI() {
 	}
 
 	override fun sendMail(uuid: UUID, id: String, sender: String) {
-		val configTemplate = MailDataManager.getTemplateCache[id] ?: return
+		val configTemplate = TemplateConfig.getTemplateCache[id] ?: return
 
 		// 反序列化邮件模板
 		val mail = SerializationUtils.deserializeConfiguration(configTemplate).apply {
