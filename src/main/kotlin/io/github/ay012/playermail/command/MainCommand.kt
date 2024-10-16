@@ -22,10 +22,10 @@ object MainCommand {
 		execute<CommandSender> { sender, _, _ ->
 			// 判断是否为管理员
 			if (sender.isOp) {
-				sender.sendLang("admin-help")
+				sender.sendLang("管理员指令帮助")
 				return@execute
 			}
-			sender.sendLang("player-help")
+			sender.sendLang("玩家指令帮助")
 		}
 	}
 
