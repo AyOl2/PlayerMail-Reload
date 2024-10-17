@@ -1,12 +1,12 @@
 lang: 'zh_CN'
 
-auto-save-cache-time: 15
+auto-save-cache-time: 10
 
 storage:
   type: 'yaml'
 
   yaml:
-    path: 'users'
+    path: '{dataFolder}/save/users'
 
   # 后续版本更新
   mysql:

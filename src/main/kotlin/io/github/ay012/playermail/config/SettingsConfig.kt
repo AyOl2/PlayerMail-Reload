@@ -13,7 +13,7 @@ object SettingsConfig {
 	var autoSaveCacheTime: Long = 20 * 1200
 
 	fun init() {
-		yaml_path = config.getString("storage.yaml.path") ?: "users"
+		yaml_path = config.getString("storage.yaml.path") ?: "{dataFolder}/save/users"
 		lang = config.getString("lang") ?: "zh_CN"
 		autoSaveCacheTime = config.getLong("auto-save-cache-time", 20) * 1200
 	}

@@ -24,7 +24,7 @@ import java.util.*
 class YAML : MailAPI() {
 
 	private fun database(uuid: UUID): Configuration {
-		val file = newFile(getDataFolder(), "save/${SettingsConfig.yaml_path}/$uuid.yml", create = true)
+		val file = newFile("${SettingsConfig.yaml_path}/$uuid.yml".replace("{dataFolder}", getDataFolder().toString()), create = true)
 		return Configuration.loadFromFile(file, Type.YAML)
 	}
 
