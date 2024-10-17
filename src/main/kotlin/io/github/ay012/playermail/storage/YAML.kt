@@ -8,22 +8,24 @@ import io.github.ay012.playermail.data.PlayerData
 import io.github.ay012.playermail.data.PlayerDataManager
 import io.github.ay012.playermail.util.ItemStackUtils
 import io.github.ay012.playermail.util.SerializationUtils
+import io.github.ay012.playermail.util.TimeUtils
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.io.newFile
+import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
 import taboolib.platform.util.onlinePlayers
+import java.io.IOException
 import java.util.*
-import java.util.stream.Collectors
-import java.util.stream.Stream
-import kotlin.system.measureTimeMillis
 
 class YAML : MailAPI() {
 
 	private fun database(uuid: UUID): Configuration {
-		return createLocal("save/${SettingsConfig.yaml_path}/$uuid.yml", type = Type.YAML, saveTime = 12000)
+		val file = newFile(getDataFolder(), "save/${SettingsConfig.yaml_path}/$uuid.yml", create = true)
+		return Configuration.loadFromFile(file, Type.YAML)
 	}
 
 	private val items by lazy {
@@ -32,37 +34,41 @@ class YAML : MailAPI() {
 
 	init {
 		submitAsync(period = SettingsConfig.autoSaveCacheTime) {
-			measureTimeMillis {
+			TimeUtils.measureTimeSeconds {
 				saveCache()
 			}.also {
-				say("&8[&fINFO&8] &3自动将缓存保存到YAML... &8(总耗时 $it ms)")
+				say("&8[&fINFO&8] &3自动将缓存保存到YAML... 共处理邮件数: ${PlayerDataManager.getPlayerMailCache.values.sumOf { mail -> mail.size }} 封 &8(总耗时 $it s)")
 			}
 		}
 	}
 
 	override fun saveCache() {
-		if (PlayerDataManager.getPlayerMailCache.isEmpty()) {
-			return
-		}
+		if (PlayerDataManager.getPlayerMailCache.isEmpty()) return
+
 		val onlineUUIDs = onlinePlayers.map { it.uniqueId }.toSet()
 
-		PlayerDataManager.getPlayerMailCache.entries.parallelStream().forEach { (uuid, mails) ->
+		PlayerDataManager.getPlayerMailCache.forEach { (uuid, mails) ->
+			val config = database(uuid)
+
 			when(uuid in onlineUUIDs) {
 				true -> {
-					// 玩家在线，直接使用缓存数据更新 YAML
 					mails.forEach { mail ->
-						database(uuid)["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
+						config["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
 					}
 				}
 				false -> {
-					// 玩家不在线，先加载 YAML 中的当前数据
 					val currentMails = selectUser(uuid).apply { addAll(mails) }
 					currentMails.forEach { mail ->
-						database(uuid)["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
+						config["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
 					}
-					// 将离线玩家的数据从缓存中删除
 					PlayerDataManager.getPlayerMailCache.remove(uuid)
 				}
+			}
+
+			try {
+				config.saveToFile()
+			} catch (e: IOException) {
+				say("&8[&cWARN&8] &c缓存写入YAML时出现错误! ${e.message}")
 			}
 		}
 	}
@@ -93,15 +99,14 @@ class YAML : MailAPI() {
 		// 获取指定 UUID 的 YAML 配置文件
 		val mailsMap = database(uuid).getConfigurationSection("mails") ?: return mutableListOf()
 
-		// 使用并行流处理：遍历 YAML 文件中所有邮件的键 flatMap 是将嵌套的数据结构扁平化为单一的流
-		return mailsMap.getKeys(false).parallelStream().flatMap { key ->
+		// 遍历 YAML 文件中所有邮件的键
+		return mailsMap.getKeys(false).flatMap { key ->
 			// 获取邮件数据字符串
 			mailsMap.getString(key)?.let {
 				// 反序列化邮件数据并将其转换为 PlayerData 对象的流
-				SerializationUtils.deserializeMailList(it).stream()
-			} ?: Stream.empty()
-			// 收集处理后的结果并将其转换为可变列表返回
-		}.collect(Collectors.toList()).toMutableList()
+				SerializationUtils.deserializeMailList(it)
+			} ?: emptyList()
+		}.toMutableList()
 	}
 
 	override fun saveItems(name: String, item: ItemStack) {

@@ -1,6 +1,7 @@
 package io.github.ay012.playermail.data
 
 import io.github.ay012.playermail.PlayerMail.say
+import io.github.ay012.playermail.util.TimeUtils
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -41,12 +42,12 @@ object PlayerDataManager {
 	 * 加载全部玩家数据至缓存
 	 */
 	private fun loadedPlayers() {
-		measureTimeMillis {
+		TimeUtils.measureTimeSeconds {
 			Bukkit.getOfflinePlayers().forEach { player ->
 				playerALLCache.add(player)
 			}
 		}.also {
-			say("&8[&fINFO&8] &a${playerALLCache.size} &3个玩家被载入至缓存... &8(总耗时 $it ms)")
+			say("&8[&fINFO&8] &a${playerALLCache.size} &3个玩家被载入至缓存... &8(总耗时 $it s)")
 		}
 	}
 

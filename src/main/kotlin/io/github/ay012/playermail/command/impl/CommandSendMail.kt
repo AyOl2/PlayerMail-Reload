@@ -34,6 +34,9 @@ object CommandSendMail : CommandExpression {
 						val senderName = if (context["指定发件人"] == "me") sender.name else context["指定发件人"]
 
 						when(user) {
+							"指定发件人(输入me则为自己)" -> {
+								return@execute
+							}
 							"所有玩家" -> {
 								PlayerDataManager.getPlayerALLCache.forEach { player ->
 									PlayerMail.getMailAPI.sendMail(player.uniqueId,mail,senderName)

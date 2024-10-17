@@ -3,16 +3,16 @@ package io.github.ay012.playermail.command.impl
 import io.github.ay012.playermail.command.CommandExpression
 import io.github.ay012.playermail.config.SettingsConfig
 import io.github.ay012.playermail.config.TemplateConfig
+import io.github.ay012.playermail.util.TimeUtils
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.subCommand
 import taboolib.platform.util.sendLang
-import kotlin.system.measureTimeMillis
 
 object CommandReload : CommandExpression {
 
 	override val command = subCommand {
 		execute<CommandSender> { sender, _, _ ->
-			measureTimeMillis {
+			TimeUtils.measureTimeSeconds{
 				SettingsConfig.init()
 				TemplateConfig.init()
 			}.also {

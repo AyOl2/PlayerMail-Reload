@@ -1,6 +1,6 @@
 lang: 'zh_CN'
 
-auto-save-cache-time: 20
+auto-save-cache-time: 15
 
 storage:
   type: 'yaml'

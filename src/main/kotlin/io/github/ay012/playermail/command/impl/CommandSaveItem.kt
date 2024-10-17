@@ -13,12 +13,15 @@ object CommandSaveItem : CommandExpression{
 	override val command = subCommand {
 
 		dynamic("物品名") {
+			suggestion<CommandSender>(uncheck = true) { _, _ ->
+				listOf("输入保存的物品名")
+			}
 			execute<CommandSender> { sender, context, _ ->
 				if (sender !is Player) return@execute
 
-				val saveName = context["物品名"]
-				val itemStack = sender.inventory.itemInMainHand
+				val saveName = if (context["物品名"] == "输入保存的物品名") return@execute else context["物品名"]
 
+				val itemStack = sender.inventory.itemInMainHand
 				if (itemStack.type == Material.AIR) {
 					sender.sendLang("保存物品-未手持")
 					return@execute
