@@ -13,13 +13,13 @@ object CommandReload : CommandExpression {
 
 	override val command = subCommand {
 		execute<CommandSender> { sender, _, _ ->
-			TimeUtils.measureTimeSeconds{
-				submitAsync {
+			submitAsync {
+				TimeUtils.measureTimeSeconds {
 					SettingsConfig.init()
 					TemplateConfig.init()
+				}.also {
+					sender.sendLang("插件配置-重载", it)
 				}
-			}.also {
-				sender.sendLang("插件配置-重载", it)
 			}
 		}
 	}

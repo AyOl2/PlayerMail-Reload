@@ -12,6 +12,8 @@ conditions:
 
 expiration-time: 3600
 
+auto-delete-day: 3
+
 need-slot: 20
 
 items:

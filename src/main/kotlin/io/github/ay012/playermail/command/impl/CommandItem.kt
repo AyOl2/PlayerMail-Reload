@@ -11,6 +11,7 @@ import taboolib.common.platform.command.subCommand
 import taboolib.platform.util.sendLang
 
 object CommandItem : CommandExpression {
+
 	override val command = subCommand {
 
 		literal("save") {

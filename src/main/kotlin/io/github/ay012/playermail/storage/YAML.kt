@@ -16,8 +16,9 @@ import taboolib.module.configuration.Type
 import taboolib.platform.util.onlinePlayers
 import java.io.IOException
 import java.util.*
+import java.util.stream.Collectors
 
-class YAML : MailAPI() {
+class YAML : MailAPI {
 
 	private fun database(uuid: UUID): Configuration {
 		val file = newFile("${SettingsConfig.yaml_path}/$uuid.yml".replace("{dataFolder}", getDataFolder().toString()), create = true)
@@ -44,19 +45,13 @@ class YAML : MailAPI() {
 
 			when(uuid in onlineUUIDs) {
 				true -> {
-					mails.forEach { mail ->
-						config["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
-					}
+					config["mails"] = SerializationUtils.serializeMailList(mails)
 				}
 				false -> {
-					val currentMails = selectUser(uuid).apply { addAll(mails) }
-					currentMails.forEach { mail ->
-						config["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
-					}
+					config["mails"] = SerializationUtils.serializeMailList(selectUser(uuid).apply { addAll(mails) })
 					PlayerDataManager.getPlayerMailCache().remove(uuid)
 				}
 			}
-
 			try {
 				config.saveToFile()
 			} catch (e: IOException) {
@@ -88,16 +83,14 @@ class YAML : MailAPI() {
 	 * @return 包含所有邮件数据的可变列表。
 	 */
 	override fun selectUser(uuid: UUID): MutableList<PlayerData> {
-		// 获取指定 UUID 的 YAML 配置文件
-		val mailsMap = database(uuid).getConfigurationSection("mails") ?: return mutableListOf()
+		val mailsList = database(uuid).getString("mails")?.let {
+			SerializationUtils.deserializeMailList(it)
+		}?.toMutableList() ?: mutableListOf()
 
-		// 遍历 YAML 文件中所有邮件的键
-		return mailsMap.getKeys(false).flatMap { key ->
-			// 获取邮件数据字符串
-			mailsMap.getString(key)?.let {
-				// 反序列化邮件数据并将其转换为 PlayerData 对象的流
-				SerializationUtils.deserializeMailList(it)
-			} ?: emptyList()
-		}.toMutableList()
+		// 过滤重复项
+		val uniqueMailsList = mailsList.distinctBy { it.uuid }
+
+		// 使用并行流来处理邮件列表，并收集为一个可变列表返回
+		return uniqueMailsList.parallelStream().collect(Collectors.toList())
 	}
 }

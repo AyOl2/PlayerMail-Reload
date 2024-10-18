@@ -14,9 +14,17 @@ taboolib {
         install(UNIVERSAL,
             BUKKIT_ALL,
             UI,
+            EXPANSION_JAVASCRIPT,
             CONFIGURATION)
     }
     version { taboolib = "6.1.2-beta10" }
+
+    description {
+        dependencies {
+            name("MythicMobs").optional(true)
+        }
+    }
+    relocate("ink.ptms.um", "io.github.ay012.playermail.um")
 }
 
 repositories {
@@ -24,6 +32,7 @@ repositories {
 }
 
 dependencies {
+    taboo("ink.ptms:um:1.0.1")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     compileOnly("ink.ptms.core:v12004:12004:mapped")
     compileOnly("ink.ptms.core:v12004:12004:universal")

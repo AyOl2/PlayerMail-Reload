@@ -1,10 +1,9 @@
 package io.github.ay012.playermail.config
 
-import io.github.ay012.playermail.PlayerMail.say
 import io.github.ay012.playermail.util.ItemStackUtils
-import io.github.ay012.playermail.util.TimeUtils
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submitAsync
 import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
 import java.util.concurrent.ConcurrentHashMap
@@ -22,12 +21,10 @@ object SaveItemConfig {
 	}
 
 	fun init() {
-		TimeUtils.measureTimeSeconds {
+		submitAsync {
 			items.getKeys(false).forEach { key ->
 				itemsCache[key] = items.getString(key) ?: ""
 			}
-		}.also {
-			say("&8[&fINFO&8] &a${itemsCache.size} &3个物品被载入至缓存... &8(总耗时 $it s)")
 		}
 	}
 
