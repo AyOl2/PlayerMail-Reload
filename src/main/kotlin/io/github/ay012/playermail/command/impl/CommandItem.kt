@@ -2,9 +2,11 @@ package io.github.ay012.playermail.command.impl
 
 import io.github.ay012.playermail.command.CommandExpression
 import io.github.ay012.playermail.config.SaveItemConfig
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.common.platform.command.player
 import taboolib.common.platform.command.subCommand
 import taboolib.platform.util.sendLang
 
@@ -56,6 +58,26 @@ object CommandItem : CommandExpression {
 						sender.sendLang("物品-删除-成功", saveName)
 					} else {
 						sender.sendLang("物品-删除-不存在", saveName)
+					}
+				}
+			}
+		}
+
+		literal("get") {
+			dynamic("输入保存的物品名") {
+				suggestion<CommandSender>(uncheck = true) { _, _ ->
+					SaveItemConfig.listItems()
+				}
+
+				player("发送目标") {
+					execute<CommandSender> { sender, context, _ ->
+						val saveName = context["输入保存的物品名"]
+						if (SaveItemConfig.getItemsCache()[saveName] != null) {
+							Bukkit.getPlayer(context.player("发送目标").uniqueId)?.let { SaveItemConfig.getItem(saveName, it) }
+							sender.sendLang("物品-获取-成功", saveName)
+						} else {
+							sender.sendLang("物品-获取-不存在", saveName)
+						}
 					}
 				}
 			}

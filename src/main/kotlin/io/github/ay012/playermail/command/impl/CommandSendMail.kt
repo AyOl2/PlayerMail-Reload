@@ -51,7 +51,7 @@ object CommandSendMail : CommandExpression {
 							}
 							else -> {
 								val player = PlayerDataManager.getPlayerALLCache().find { it.name == user } ?: run {
-									sender.sendLang("邮件发送-未知玩家")
+									sender.sendLang("命令错误-无效玩家", user)
 									return@execute
 								}
 								PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName).run {
