@@ -7,7 +7,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.system.measureTimeMillis
 
 object PlayerDataManager {
 
@@ -19,7 +18,10 @@ object PlayerDataManager {
 	/**
 	 * 获取玩家邮件数据缓存
 	 */
-	val getPlayerMailCache= playerMailCache
+
+	fun getPlayerMailCache(): ConcurrentHashMap<UUID, MutableList<PlayerData>> {
+		return playerMailCache
+	}
 
 	/**
 	 * 全部玩家数据缓存
@@ -29,7 +31,9 @@ object PlayerDataManager {
 	/**
 	 * 缓存全部玩家数据缓存
 	 */
-	val getPlayerALLCache: ConcurrentHashMap.KeySetView<OfflinePlayer, Boolean> = playerALLCache
+	fun getPlayerALLCache(): ConcurrentHashMap.KeySetView<OfflinePlayer, Boolean> {
+		return playerALLCache
+	}
 
 	/**
 	 * 初始化

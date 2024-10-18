@@ -6,17 +6,13 @@ import io.github.ay012.playermail.config.SettingsConfig
 import io.github.ay012.playermail.config.TemplateConfig
 import io.github.ay012.playermail.data.PlayerData
 import io.github.ay012.playermail.data.PlayerDataManager
-import io.github.ay012.playermail.util.ItemStackUtils
 import io.github.ay012.playermail.util.SerializationUtils
 import io.github.ay012.playermail.util.TimeUtils
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
-import taboolib.module.configuration.createLocal
 import taboolib.platform.util.onlinePlayers
 import java.io.IOException
 import java.util.*
@@ -28,26 +24,22 @@ class YAML : MailAPI() {
 		return Configuration.loadFromFile(file, Type.YAML)
 	}
 
-	private val items by lazy {
-		createLocal("save/items.yml", type = Type.YAML, saveTime = 12000)
-	}
-
 	init {
 		submitAsync(period = SettingsConfig.autoSaveCacheTime) {
 			TimeUtils.measureTimeSeconds {
 				saveCache()
 			}.also {
-				say("&8[&fINFO&8] &3自动将缓存保存到YAML... 共处理邮件数: ${PlayerDataManager.getPlayerMailCache.values.sumOf { mail -> mail.size }} 封 &8(总耗时 $it s)")
+				say("&8[&fINFO&8] &3自动将缓存保存到YAML... 共处理邮件数: ${PlayerDataManager.getPlayerMailCache().values.sumOf { mail -> mail.size }} 封 &8(总耗时 $it s)")
 			}
 		}
 	}
 
 	override fun saveCache() {
-		if (PlayerDataManager.getPlayerMailCache.isEmpty()) return
+		if (PlayerDataManager.getPlayerMailCache().isEmpty()) return
 
 		val onlineUUIDs = onlinePlayers.map { it.uniqueId }.toSet()
 
-		PlayerDataManager.getPlayerMailCache.forEach { (uuid, mails) ->
+		PlayerDataManager.getPlayerMailCache().forEach { (uuid, mails) ->
 			val config = database(uuid)
 
 			when(uuid in onlineUUIDs) {
@@ -61,7 +53,7 @@ class YAML : MailAPI() {
 					currentMails.forEach { mail ->
 						config["mails.${mail.uuid}"] = SerializationUtils.serializeMailList(mutableListOf(mail))
 					}
-					PlayerDataManager.getPlayerMailCache.remove(uuid)
+					PlayerDataManager.getPlayerMailCache().remove(uuid)
 				}
 			}
 
@@ -74,7 +66,7 @@ class YAML : MailAPI() {
 	}
 
 	override fun sendMail(uuid: UUID, id: String, sender: String) {
-		val configTemplate = TemplateConfig.getTemplateCache[id] ?: return
+		val configTemplate = TemplateConfig.getTemplateCache()[id] ?: return
 
 		// 反序列化邮件模板
 		val mail = SerializationUtils.deserializeConfiguration(configTemplate).apply {
@@ -83,11 +75,11 @@ class YAML : MailAPI() {
 		}
 
 		// 将邮件存入缓存
-		PlayerDataManager.getPlayerMailCache.computeIfAbsent(uuid) { mutableListOf() }.add(mail)
+		PlayerDataManager.getPlayerMailCache().computeIfAbsent(uuid) { mutableListOf() }.add(mail)
 	}
 
 	override fun loadUser(uuid: UUID) {
-		PlayerDataManager.getPlayerMailCache[uuid] = selectUser(uuid)
+		PlayerDataManager.getPlayerMailCache()[uuid] = selectUser(uuid)
 	}
 
 	/**
@@ -107,13 +99,5 @@ class YAML : MailAPI() {
 				SerializationUtils.deserializeMailList(it)
 			} ?: emptyList()
 		}.toMutableList()
-	}
-
-	override fun saveItems(name: String, item: ItemStack) {
-		items[name] = ItemStackUtils.itemStackToBase64(item)
-	}
-
-	override fun getItems(name: String, player: Player) {
-		player.inventory.addItem(ItemStackUtils.base64ToItemStack(items.getString(name) ?: return))
 	}
 }

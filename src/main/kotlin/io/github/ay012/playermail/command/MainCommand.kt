@@ -1,14 +1,13 @@
 package io.github.ay012.playermail.command
 
 import io.github.ay012.playermail.command.impl.CommandReload
-import io.github.ay012.playermail.command.impl.CommandSaveItem
+import io.github.ay012.playermail.command.impl.CommandItem
 import io.github.ay012.playermail.command.impl.CommandSendMail
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.platform.util.sendLang
-
 
 @CommandHeader(
 	name = "PlayerMail",
@@ -34,6 +33,6 @@ object MainCommand {
 	@CommandBody(permission = "playermail.admin.sendMail")
 	val sendmail = CommandSendMail.command
 
-	@CommandBody(permission = "playermail.admin.saveItem")
-	val saveItem = CommandSaveItem.command
+	@CommandBody(permission = "playermail.admin.item")
+	val item = CommandItem.command
 }

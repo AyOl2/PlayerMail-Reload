@@ -9,7 +9,6 @@ import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.system.measureTimeMillis
 
 object TemplateConfig {
 
@@ -18,7 +17,9 @@ object TemplateConfig {
 
 	private val templateCache = ConcurrentHashMap<String, Configuration>() // 所有的邮件数据
 
-	val getTemplateCache = templateCache
+	fun getTemplateCache(): ConcurrentHashMap<String, Configuration> {
+		return templateCache
+	}
 
 	// 初始化方法，加载所有模板文件
 	fun init() {

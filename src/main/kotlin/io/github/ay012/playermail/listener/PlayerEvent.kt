@@ -14,7 +14,7 @@ object PlayerEvent {
 
 		submitAsync {
 			// 载入玩家邮件数据
-			PlayerMail.getMailAPI.loadUser(player.uniqueId)
+			PlayerMail.getMailAPI().loadUser(player.uniqueId)
 			// 判断玩家缓存中是否存在此玩家
 			PlayerDataManager.addPlayer(player)
 		}

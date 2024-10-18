@@ -1,6 +1,7 @@
 package io.github.ay012.playermail
 
 import io.github.ay012.playermail.api.MailAPI
+import io.github.ay012.playermail.config.SaveItemConfig
 import io.github.ay012.playermail.config.SettingsConfig
 import io.github.ay012.playermail.config.TemplateConfig
 import io.github.ay012.playermail.data.PlayerDataManager
@@ -25,12 +26,13 @@ import taboolib.module.chat.colored
 object PlayerMail : Plugin() {
     private lateinit var mailAPI : MailAPI
 
-    val getMailAPI
-        get() = mailAPI
+    fun getMailAPI(): MailAPI {
+        return mailAPI
+    }
 
     override fun onEnable() {
-        this.init() // 载入初始化
-        mailAPI = YAML() // 载入存储方式
+        init()
+        mailAPI = YAML()
     }
 
     override fun onDisable() {
@@ -43,6 +45,7 @@ object PlayerMail : Plugin() {
     private fun init() {
         SettingsConfig.init()
         PlayerDataManager.init()
+        SaveItemConfig.init()
         TemplateConfig.init()
     }
 }

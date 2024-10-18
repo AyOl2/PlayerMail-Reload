@@ -1,9 +1,7 @@
 package io.github.ay012.playermail.api
 
 import io.github.ay012.playermail.data.PlayerData
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import java.util.UUID
+import java.util.*
 
 abstract class MailAPI {
 
@@ -33,20 +31,4 @@ abstract class MailAPI {
 	 * 将缓存数据写入存储
 	 */
 	internal abstract fun saveCache()
-
-	/**
-	 * 将物品写入存储
-	 *
-	 * @param name 保存的物品名
-	 * @param item 需要操作的物品
-	 */
-	internal abstract fun saveItems(name: String, item: ItemStack)
-
-	/**
-	 * 将保存的物品给予给玩家
-	 *
-	 * @param name 保存的物品名
-	 * @param player 需要操作的玩家
-	 */
-	internal abstract fun getItems(name: String, player: Player)
 }

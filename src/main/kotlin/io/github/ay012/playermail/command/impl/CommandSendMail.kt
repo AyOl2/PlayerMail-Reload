@@ -18,11 +18,11 @@ object CommandSendMail : CommandExpression {
 
 		dynamic("邮件唯一标识符") {
 			suggestion<CommandSender>(uncheck = true) { _, _ ->
-				TemplateConfig.getTemplateCache.keys().toList()
+				TemplateConfig.getTemplateCache().keys().toList()
 			}
 			dynamic("发送目标") {
 				suggestion<CommandSender>(uncheck = true) { _, _ ->
-					listOf("在线玩家", "所有玩家") + PlayerDataManager.getPlayerALLCache.mapNotNull { it.name }
+					listOf("在线玩家", "所有玩家") + PlayerDataManager.getPlayerALLCache().mapNotNull { it.name }
 				}
 				dynamic("指定发件人") {
 					suggestion<CommandSender>(uncheck = true) { _, _ ->
@@ -31,30 +31,30 @@ object CommandSendMail : CommandExpression {
 					execute<CommandSender> { sender, context, _ ->
 						val mail = context["邮件唯一标识符"]
 						val user = context["发送目标"]
-						val senderName = if (context["指定发件人"] == "me") sender.name else context["指定发件人"]
-
+						val senderName = when(context["指定发件人"]) {
+							"me" -> sender.name
+							"指定发件人(输入me则为自己)" -> return@execute
+							else -> context["指定发件人"]
+						}
 						when(user) {
-							"指定发件人(输入me则为自己)" -> {
-								return@execute
-							}
 							"所有玩家" -> {
-								PlayerDataManager.getPlayerALLCache.forEach { player ->
-									PlayerMail.getMailAPI.sendMail(player.uniqueId,mail,senderName)
+								PlayerDataManager.getPlayerALLCache().forEach { player ->
+									PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName)
 								}
 								sender.sendLang("邮件发送-所有玩家", mail)
 							}
 							"在线玩家" -> {
 								onlinePlayers.forEach { player ->
-									PlayerMail.getMailAPI.sendMail(player.uniqueId,mail,senderName)
+									PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName)
 								}
 								sender.sendLang("邮件发送-在线玩家", mail)
 							}
 							else -> {
-								val player = PlayerDataManager.getPlayerALLCache.find { it.name == user } ?: run {
+								val player = PlayerDataManager.getPlayerALLCache().find { it.name == user } ?: run {
 									sender.sendLang("邮件发送-未知玩家")
 									return@execute
 								}
-								PlayerMail.getMailAPI.sendMail(player.uniqueId,mail,senderName).run {
+								PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName).run {
 									sender.sendLang("邮件发送-指定玩家", user, mail)
 								}
 							}
