@@ -68,15 +68,19 @@ object CommandItem : CommandExpression {
 				suggestion<CommandSender>(uncheck = true) { _, _ ->
 					SaveItemConfig.listItems()
 				}
-
 				player("发送目标") {
-					execute<CommandSender> { sender, context, _ ->
-						val saveName = context["输入保存的物品名"]
-						if (SaveItemConfig.getItemsCache()[saveName] != null) {
-							Bukkit.getPlayer(context.player("发送目标").uniqueId)?.let { SaveItemConfig.getItem(saveName, it) }
-							sender.sendLang("物品-给予-玩家", saveName)
-						} else {
-							sender.sendLang("物品-错误-不存在", saveName)
+					dynamic("数量") {
+						suggestion<CommandSender>(uncheck = true) { _, _ ->
+							listOf("1", "2", "3", "4", "5", "10", "32", "64")
+						}
+						execute<CommandSender> { sender, context, _ ->
+							val saveName = context["输入保存的物品名"]
+							if (SaveItemConfig.getItemsCache()[saveName] != null) {
+								Bukkit.getPlayer(context.player("发送目标").uniqueId)?.let { SaveItemConfig.getItem(saveName, it,context["数量"].toIntOrNull() ?: 1) }
+								sender.sendLang("物品-给予-玩家", saveName, context["数量"], context["发送目标"])
+							} else {
+								sender.sendLang("物品-错误-不存在", saveName)
+							}
 						}
 					}
 				}

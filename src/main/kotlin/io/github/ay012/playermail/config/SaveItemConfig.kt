@@ -48,9 +48,13 @@ object SaveItemConfig {
 	 *
 	 * @param name 保存的物品名
 	 * @param player 需要操作的玩家
+	 * @param amount 需要的物品数量
 	 */
-	fun getItem(name: String, player: Player){
-		player.inventory.addItem(ItemStackUtils.base64ToItemStack(itemsCache[name] ?: return))
+	fun getItem(name: String, player: Player, amount: Int) {
+		val itemData = itemsCache[name] ?: return
+		val itemStack = ItemStackUtils.base64ToItemStack(itemData)
+		itemStack.amount = amount
+		player.inventory.addItem(itemStack)
 	}
 
 	/**

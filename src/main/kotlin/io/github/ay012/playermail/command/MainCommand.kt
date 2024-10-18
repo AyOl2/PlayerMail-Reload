@@ -2,6 +2,7 @@ package io.github.ay012.playermail.command
 
 import io.github.ay012.playermail.command.impl.CommandReload
 import io.github.ay012.playermail.command.impl.CommandItem
+import io.github.ay012.playermail.command.impl.CommandMenu
 import io.github.ay012.playermail.command.impl.CommandSendMail
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.CommandBody
@@ -35,4 +36,7 @@ object MainCommand {
 
 	@CommandBody(permission = "playermail.admin.item")
 	val item = CommandItem.command
+
+	@CommandBody
+	val menu = CommandMenu.command
 }
