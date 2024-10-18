@@ -41,24 +41,21 @@ object CommandSendMail : CommandExpression {
 								PlayerDataManager.getPlayerALLCache().forEach { player ->
 									PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName)
 								}
-								sender.sendLang("邮件发送-所有玩家", mail)
 							}
 							"在线玩家" -> {
 								onlinePlayers.forEach { player ->
 									PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName)
 								}
-								sender.sendLang("邮件发送-在线玩家", mail)
 							}
 							else -> {
 								val player = PlayerDataManager.getPlayerALLCache().find { it.name == user } ?: run {
 									sender.sendLang("命令错误-无效玩家", user)
 									return@execute
 								}
-								PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName).run {
-									sender.sendLang("邮件发送-指定玩家", user, mail)
-								}
+								PlayerMail.getMailAPI().sendMail(player.uniqueId,mail,senderName)
 							}
 						}
+						sender.sendLang("邮件发送-玩家", user, mail)
 					}
 				}
 			}

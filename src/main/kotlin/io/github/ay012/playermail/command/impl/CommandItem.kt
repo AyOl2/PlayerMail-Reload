@@ -57,7 +57,7 @@ object CommandItem : CommandExpression {
 						SaveItemConfig.removeItem(saveName)
 						sender.sendLang("物品-删除-成功", saveName)
 					} else {
-						sender.sendLang("物品-删除-不存在", saveName)
+						sender.sendLang("物品-错误-不存在", saveName)
 					}
 				}
 			}
@@ -74,9 +74,9 @@ object CommandItem : CommandExpression {
 						val saveName = context["输入保存的物品名"]
 						if (SaveItemConfig.getItemsCache()[saveName] != null) {
 							Bukkit.getPlayer(context.player("发送目标").uniqueId)?.let { SaveItemConfig.getItem(saveName, it) }
-							sender.sendLang("物品-获取-成功", saveName)
+							sender.sendLang("物品-给予-玩家", saveName)
 						} else {
-							sender.sendLang("物品-获取-不存在", saveName)
+							sender.sendLang("物品-错误-不存在", saveName)
 						}
 					}
 				}
